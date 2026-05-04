@@ -1,0 +1,12 @@
+.DS_Store
+*.log
+*_bk*
+.htaccess
+.htpasswd
+file/
+file/
+file/
+books/
+assets/document/
+assets/images/
+movie/

@@ -1,0 +1,78 @@
+=== redirect-debug: 2025-11-28 04:39:05 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: 
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+
+=== redirect-debug: 2025-11-28 04:39:07 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: https://official-webdev.zenko-sai.or.jp/
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+
+=== redirect-debug: 2025-11-28 04:39:09 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: 
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+
+=== redirect-debug: 2025-11-28 04:39:28 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: 
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+
+=== redirect-debug: 2025-11-28 04:39:31 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: 
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+
+=== redirect-debug: 2025-11-28 04:39:38 ===
+REQUEST_URI: /
+REQUEST_METHOD: GET
+CURRENT_URL (constructed): https://official-webdev.zenko-sai.or.jp/
+HTTP_REFERER: https://official-webdev.zenko-sai.or.jp/
+HTTP_HOST: official-webdev.zenko-sai.or.jp
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION_has_member_info: NO
+SESSION_member_info_sample: 
+CFS_restrict_page: 
+CURRENT_SLUG: home
+

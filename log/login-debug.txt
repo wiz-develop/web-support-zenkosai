@@ -1,0 +1,147 @@
+=== header.php at 2025-11-28T04:06:57+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [_ga_ED7CSF7W5H] => deleted
+    [_ga_HMCPN1TMWF] => deleted
+    [_ga_T6HVV4KBR3] => GS2.1.s1758699721$o38$g1$t1758700077$j60$l0$h0
+    [_ga] => GA1.1.1789117722.1761420037
+    [mw-wp-form-token] => cf87fdab1bbcd61df68a6d02cd507da4c128ffcd4db0ac5fd7b8103980af54e6
+    [wordpress_test_cookie] => WP Cookie check
+    [_ga_5Z7Q816BF3] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_ga_FJJF819HSN] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_clck] => 11qc6dh^2^g1e^0^2056
+    [wp_lang] => ja
+    [_clsk] => av5zur^1764302596780^22^1^z.clarity.ms/collect
+    [AWSALB] => FLd75DOrrsjqZMruS5AYIb7xJl6TfKcBzbRL8InQ48lBiWK30ErnsOBr3vnQ9aCcKqo84IuG7clpNqUR0evnYH4KW+QFHhp165zpVdYvw84rXD78TSH1EqL3bwoV
+    [AWSALBCORS] => FLd75DOrrsjqZMruS5AYIb7xJl6TfKcBzbRL8InQ48lBiWK30ErnsOBr3vnQ9aCcKqo84IuG7clpNqUR0evnYH4KW+QFHhp165zpVdYvw84rXD78TSH1EqL3bwoV
+    [PHPSESSID] => 7pabjjv9dvsemt9vhka78c2rrb
+)
+
+SESSION_STATUS: 2
+SESSION_ID: 7pabjjv9dvsemt9vhka78c2rrb
+SESSION: Array
+(
+)
+
+
+=== header.php at 2025-11-28T04:06:59+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [_ga_ED7CSF7W5H] => deleted
+    [_ga_HMCPN1TMWF] => deleted
+    [_ga_T6HVV4KBR3] => GS2.1.s1758699721$o38$g1$t1758700077$j60$l0$h0
+    [_ga] => GA1.1.1789117722.1761420037
+    [mw-wp-form-token] => cf87fdab1bbcd61df68a6d02cd507da4c128ffcd4db0ac5fd7b8103980af54e6
+    [wordpress_test_cookie] => WP Cookie check
+    [_ga_5Z7Q816BF3] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_ga_FJJF819HSN] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_clck] => 11qc6dh^2^g1e^0^2056
+    [wp_lang] => ja
+    [_clsk] => av5zur^1764302596780^22^1^z.clarity.ms/collect
+    [PHPSESSID] => 7pabjjv9dvsemt9vhka78c2rrb
+    [AWSALB] => ZRE+HA5GnaK+JnsxEnJnAXf0MQwweqHdnGeka1l8+xgxmabGjY7DEZaZMZ7+kGWYqF8QHVaSW5JwZcuPPfy87qNoLhh8pHjQvAXkU53ZPsEFvBahVMA42335oYBb
+    [AWSALBCORS] => ZRE+HA5GnaK+JnsxEnJnAXf0MQwweqHdnGeka1l8+xgxmabGjY7DEZaZMZ7+kGWYqF8QHVaSW5JwZcuPPfy87qNoLhh8pHjQvAXkU53ZPsEFvBahVMA42335oYBb
+)
+
+SESSION_STATUS: 2
+SESSION_ID: 7pabjjv9dvsemt9vhka78c2rrb
+SESSION: Array
+(
+)
+
+
+=== header.php at 2025-11-28T04:07:02+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [_ga_ED7CSF7W5H] => deleted
+    [_ga_HMCPN1TMWF] => deleted
+    [_ga_T6HVV4KBR3] => GS2.1.s1758699721$o38$g1$t1758700077$j60$l0$h0
+    [_ga] => GA1.1.1789117722.1761420037
+    [mw-wp-form-token] => cf87fdab1bbcd61df68a6d02cd507da4c128ffcd4db0ac5fd7b8103980af54e6
+    [wordpress_test_cookie] => WP Cookie check
+    [_ga_5Z7Q816BF3] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_ga_FJJF819HSN] => GS2.1.s1764146625$o145$g1$t1764146848$j60$l0$h0
+    [_clck] => 11qc6dh^2^g1e^0^2056
+    [wp_lang] => ja
+    [PHPSESSID] => 7pabjjv9dvsemt9vhka78c2rrb
+    [_clsk] => av5zur^1764302819899^23^1^z.clarity.ms/collect
+    [AWSALB] => fIqiAWrQhIFdaIvO8agLPWKk65MaVHOUVNaaB6LesY+gA7m93r6+lFgTkfbbP8u35HQJT+npJ7TPM1De0EXAkszW2fhrBgqGwedZpnQ5dVNy4G3wRKgnwO0nVplY
+    [AWSALBCORS] => fIqiAWrQhIFdaIvO8agLPWKk65MaVHOUVNaaB6LesY+gA7m93r6+lFgTkfbbP8u35HQJT+npJ7TPM1De0EXAkszW2fhrBgqGwedZpnQ5dVNy4G3wRKgnwO0nVplY
+)
+
+SESSION_STATUS: 2
+SESSION_ID: 7pabjjv9dvsemt9vhka78c2rrb
+SESSION: Array
+(
+)
+
+
+=== header.php at 2025-11-28T04:30:58+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [mw-wp-form-token] => a47c2973739b2720a1433fee590dace8dc86eed2d8af375801ba4656c4d7d61b
+    [PHPSESSID] => g9sc4208itkidmkaceoe27onl4
+    [_ga] => GA1.1.1213454861.1764301666
+    [_ga_ED7CSF7W5H] => GS2.1.s1764301666$o1$g1$t1764301666$j60$l0$h0
+    [_ga_HMCPN1TMWF] => GS2.1.s1764301666$o1$g0$t1764301666$j60$l0$h0
+    [_clck] => 1of60vm^2^g1e^0^2158
+    [_clsk] => d93ah0^1764304230566^1^1^z.clarity.ms/collect
+    [AWSALB] => fivLLf7BvyedZMCcaMglBMbiVjqslUNJyT9PUctE/6K9y4QAnKEwwIg8kIYK9ZNZz0dfTVBIjcD70Ww2CPxZ/QPksLxPS2EcxkXl22yo0aCICtedv/W7/TxkVRB2
+    [AWSALBCORS] => fivLLf7BvyedZMCcaMglBMbiVjqslUNJyT9PUctE/6K9y4QAnKEwwIg8kIYK9ZNZz0dfTVBIjcD70Ww2CPxZ/QPksLxPS2EcxkXl22yo0aCICtedv/W7/TxkVRB2
+)
+
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION: Array
+(
+)
+
+
+=== header.php at 2025-11-28T04:31:03+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [mw-wp-form-token] => a47c2973739b2720a1433fee590dace8dc86eed2d8af375801ba4656c4d7d61b
+    [PHPSESSID] => g9sc4208itkidmkaceoe27onl4
+    [_ga] => GA1.1.1213454861.1764301666
+    [_clck] => 1of60vm^2^g1e^0^2158
+    [_ga_ED7CSF7W5H] => GS2.1.s1764304259$o2$g1$t1764304259$j60$l0$h0
+    [_ga_HMCPN1TMWF] => GS2.1.s1764304259$o2$g0$t1764304259$j60$l0$h0
+    [_clsk] => d93ah0^1764304262023^2^1^z.clarity.ms/collect
+    [AWSALB] => O2gAJBmCNqQnEesvTKh+q2I+EYMtIi91+K6fsLSkYAKi8GoLEc2GyXrvGVOSTBNS9O8XnLTB6D8z3xhrvr66693spKFdOraLDDDnxjHPi0ORp9z+5ZEXKbjyACQJ
+    [AWSALBCORS] => O2gAJBmCNqQnEesvTKh+q2I+EYMtIi91+K6fsLSkYAKi8GoLEc2GyXrvGVOSTBNS9O8XnLTB6D8z3xhrvr66693spKFdOraLDDDnxjHPi0ORp9z+5ZEXKbjyACQJ
+)
+
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION: Array
+(
+)
+
+
+=== header.php at 2025-11-28T04:31:11+00:00 ===
+REQUEST_URI: /
+COOKIE: Array
+(
+    [mw-wp-form-token] => a47c2973739b2720a1433fee590dace8dc86eed2d8af375801ba4656c4d7d61b
+    [PHPSESSID] => g9sc4208itkidmkaceoe27onl4
+    [_ga] => GA1.1.1213454861.1764301666
+    [_clck] => 1of60vm^2^g1e^0^2158
+    [_ga_ED7CSF7W5H] => GS2.1.s1764304259$o2$g1$t1764304259$j60$l0$h0
+    [_ga_HMCPN1TMWF] => GS2.1.s1764304259$o2$g0$t1764304259$j60$l0$h0
+    [_clsk] => d93ah0^1764304262023^2^1^z.clarity.ms/collect
+    [AWSALB] => YMSNndoEPcYyWBIASmhIQNomThcAOYzPTtNsmcKXGBHq8IvMGK3ntZZ6c6tZt37KXZkhn+HzuT7JJ7BKZ2KBsFGjY9f7DgWUdnoBvSK8oM4jiVzJyQgz/fAmfnHp
+    [AWSALBCORS] => YMSNndoEPcYyWBIASmhIQNomThcAOYzPTtNsmcKXGBHq8IvMGK3ntZZ6c6tZt37KXZkhn+HzuT7JJ7BKZ2KBsFGjY9f7DgWUdnoBvSK8oM4jiVzJyQgz/fAmfnHp
+)
+
+SESSION_STATUS: 2
+SESSION_ID: g9sc4208itkidmkaceoe27onl4
+SESSION: Array
+(
+)
+
+

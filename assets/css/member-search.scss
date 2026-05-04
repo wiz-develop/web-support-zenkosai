@@ -1,0 +1,276 @@
+/**********************************************
+*　関数設定
+***********************************************/
+$p-maincolor: #8ec6e6;
+$k-maincolor: #b6df92;
+$business   : #1e73be;
+$n-maincolor: #ddd68b;
+$csr-color:   #f3a23b;
+$gray-back: #f3f3f3;
+$lightgray: #f1f1f1;
+$lifesupport-color: #16521D;
+$lifesupport-subcolor:#7AC174;
+$boder-color: #1A578B;
+$hoboblack: #222222;
+$about-color: #181652;
+$about-subcolor: #BDD3E6;
+$lightwhite: #f7f8e6;
+$brightgreen: #8dbf7f;
+$darkgreen: #285024;
+$thickbrown: #534d2e;
+$faq-maincolor: #70B081;
+$faq-subcolor: #A7C53C;
+$back-shadow: 0 1px 3px 0 rgba(0, 0, 0, .33);
+$h1-size: 2rem;
+$h2-size: 1.5rem;
+$h3-size: 1.2rem;
+$index-w-pc: 20rem;
+$content-margin: 2rem 0;
+$letter-spacing: .15rem;
+$procedure-main_color :#EA9FCF;
+$font-family: 'Kosugi', 'Mada', sans-serif;
+/**********************************************
+*　メディアクエリ
+***********************************************/
+$pc-huge: 2300px;
+$pc-huge-md: 2000px;
+$pc-huge-sm: 1700px;
+$pc-big: 1500px;
+$pc-big-min: 1400px;
+$pc-big-minimun: 1300px;
+$pc-wide-min: 1201px;
+$pc-lg: 1210px;
+$pc-wide: 1200px;
+$pc-md-wide: 999px;
+$pc-md: 991px;
+$pc: 960px;
+$pc-min: 961px;
+$tab: 768px;
+$tab-min: 769px;
+$sp-wide-min: 577px;
+$sp-wide: 576px;
+$sp-min: 426px;
+$sp: 425px;
+$sp-slim-min: 376px;
+$sp-slim-max: 376px;
+$sp-minimun: 320px;
+
+@mixin pc-huge {
+    @media (max-width: ($pc-huge)) {
+        @content;
+    }
+}
+@mixin pc-huge-md {
+    @media (max-width: ($pc-huge-md)) {
+        @content;
+    }
+}
+@mixin pc-huge-sm {
+    @media (max-width: ($pc-huge-sm)) {
+        @content;
+    }
+}
+@mixin pc-big {
+    @media (max-width: ($pc-big)) {
+        @content;
+    }
+}
+@mixin pc-big-min {
+    @media (max-width: ($pc-big-min)) {
+        @content;
+    }
+}
+@mixin pc-big-minimun {
+    @media (max-width: ($pc-big-minimun)) {
+        @content;
+    }
+}
+@mixin pc-lg {
+    @media (max-width: ($pc-lg)) {
+        @content;
+    }
+}
+@mixin pc-md {
+    @media (max-width: ($pc-md)) {
+        @content;
+    }
+}
+@mixin pc-min {
+    @media (max-width: ($pc-min)) {
+      @content;
+    }
+}
+@mixin pc-wide {
+    @media (max-width: ($pc-wide)) {
+      @content;
+    }
+}
+@mixin pc-md-wide {
+    @media (max-width: ($pc-wide)) {
+      @content;
+    }
+}
+@mixin pc-wide-min {
+    @media (max-width: ($pc-wide-min)) {
+      @content;
+    }
+}
+@mixin pc {
+    @media (max-width: ($pc)) {
+      @content;
+    }
+}
+@mixin tab {
+  @media (max-width: ($tab)) {
+    @content;
+  }
+}
+@mixin sp-wide {
+  @media (max-width: ($sp-wide)) {
+    @content;
+  }
+}
+@mixin sp {
+    @media (max-width: ($sp)) {
+      @content;
+    }
+}
+@mixin sp-minimun {
+    @media (max-width: ($sp-minimun)) {
+      @content;
+    }
+}
+@mixin tab-min {
+    @media (min-width: ($tab-min)) {
+      @content;
+    }
+}
+@mixin sp-wide-min {
+    @media (min-width: ($sp-wide-min)) {
+      @content;
+    }
+}
+@mixin sp-min {
+      @media (min-width: ($sp-min)) {
+        @content;
+      }
+}
+@mixin sp-slim-min {
+    @media (min-width: ($sp-slim-min)) {
+      @content;
+    }
+}
+@mixin sp-slim-max {
+    @media (max-width: ($sp-slim-max)) {
+      @content;
+    }
+}
+
+header.siteHeader {
+    .header-top {
+        .site-logo {
+            &.member-search {
+                width: 27%;
+            }
+        }
+    }
+}
+.header-member-search {
+    border: 1px solid #0c5391;
+    min-height: 3rem;
+    min-width: 180px;
+    justify-content: center;
+    color: #0c5391;
+}
+.member-search {
+    .page-header {
+        .page-top {
+            padding-top: 4rem;
+            margin-bottom: 1rem;
+            h1 {
+                color: #000;
+                font-size: 1.8rem;
+                letter-spacing: .2rem;
+            }
+        }
+    }
+    .page-content-wrapper {
+        div {
+            .page-content-innerwrap {
+                .page-content-div {
+                    &.mod-head {
+                        background-color: #f7fbff;
+                        .search-content {
+                            &__item {
+                                h2 {
+                                    font-size: 1rem;
+                                    margin-bottom: 0.5rem;
+                                    padding-left: 0.5rem;
+                                    border-left: solid 4px #c3c2c2;
+                                }
+                                form {
+                                    position: relative;
+                                    .form-control {
+                                        padding-right: 6rem !important;
+                                    }
+                                    .search-submit {
+                                        background-color: #0c5391;
+                                        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+                                        color: white;
+                                    }
+                                    .search-clear {
+                                        background-color: #907b0b;
+                                        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+                                        color: white;
+                                        margin-left: .5rem;
+                                        padding: .375rem 1rem;
+                                    }
+                                }
+                            }
+                        }
+                        .reset-btn {
+                            button {
+                                color: #ff0057;
+                            }
+                        }
+                    }
+                    &.mod-body {
+                        .search-result {
+                            &__header {
+                                margin-bottom: 0.25rem;
+                                p {
+                                    font-size: .9rem;
+                                }
+                                &__tit {
+                                    font-weight: bold;
+                                    font-size: 1.1rem !important;
+                                }
+                            }
+                            table {
+                                text-align: center;
+                                tr {
+                                    th,td {
+                                        padding: 0.25rem 0.5rem;
+                                    }
+                                    td {
+                                        border: 1px solid rgba(0,0,0,.1);
+                                    }
+                                }
+                                .item-name {
+                                    background-color: #e8e2dd;
+                                    &__qualification {
+                                        width: calc(20% / 2) !important;
+                                    }
+                                    th {
+                                        width: calc(80% / 9);
+                                        border: solid 1px white;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
