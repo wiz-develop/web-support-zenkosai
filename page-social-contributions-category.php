@@ -138,9 +138,24 @@ console_log($t);
                         <p class="mb-0">投稿記事はありません。</p>
                         <?php endif; ?>
                     </div>
-                    <?php if ($posts) : ?>
+                    <?php if ($posts) :
+                        // 「もっと見る」リンクの組み立て
+                        //   ・サポートプロジェクト個別カテゴリー（storks/victorina/epic-exe/sdd/glion-arena/marathon）
+                        //     から来た場合のみ、活動一覧側で対応タグを初期選択させるため
+                        //     csr_cat=csr-activities&from=スラッグ の形式にする
+                        //   ・その他のカテゴリー（ボランティア活動・まごころ募金 等）は従来通り
+                        //     csr_cat=自スラッグ で活動一覧に遷移（旧仕様の「これまでの活動報告」表示）
+                        $sp_target_slugs = ['storks', 'victorina', 'epic-exe', 'sdd', 'glion-arena', 'marathon'];
+                        $current_t_slug  = isset($t->slug) ? $t->slug : '';
+                        if ( in_array($current_t_slug, $sp_target_slugs, true) ) {
+                            $more_url = '/social-contributions/category/activities/?csr_cat=csr-activities&from=' . rawurlencode($current_t_slug);
+                        } else {
+                            // 親ページ（csr-activities）自身、およびサポートプロジェクト外のカテゴリーは従来通り
+                            $more_url = '/social-contributions/category/activities/?csr_cat=' . rawurlencode($current_t_slug);
+                        }
+                    ?>
                     <div class="activities-link">
-                        <a href="/social-contributions/category/activities/?csr_cat=<?php echo $t->slug; ?>">
+                        <a href="<?php echo esc_url($more_url); ?>">
                             <div class="activities-link__name">
                                 もっと見る
                             </div>

@@ -29456,3 +29456,542 @@ header.user_loggedin.p_member{
         }
     }
 }
+
+/* ============================================================
+ * 新規追加：サポートプロジェクトの活動報告
+ *  - 戻りリンク（子ページから遷移時）
+ *  - 検索結果バー
+ *  - サイドフィルター（複数選択タグUI）
+ *  既存の .csr-activities-index 系スタイルには干渉しない（独立クラス）
+ * ============================================================ */
+
+// 子ページからの戻りリンク
+.csr-back-link {
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .5rem 1rem;
+        background-color: #fff;
+        border: 1px solid $csr-color;
+        border-radius: 999px;
+        color: $csr-color;
+        font-size: .95rem;
+        line-height: 1.4;
+        text-decoration: none;
+        transition: background-color .2s ease, color .2s ease;
+        &:hover {
+            background-color: $csr-color;
+            color: #fff;
+            text-decoration: none;
+        }
+        i {
+            font-size: .8rem;
+        }
+        @include sp-wide {
+            font-size: .85rem;
+            padding: .45rem .85rem;
+        }
+    }
+}
+
+// 検索結果バー
+.csr-search-result {
+    padding: .75rem 1rem;
+    background-color: lighten($csr-color, 38%);
+    border-left: 4px solid $csr-color;
+    border-radius: 4px;
+    &__lead {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+    &__label {
+        font-weight: bold;
+        color: #444;
+        font-size: .95rem;
+    }
+    &__count {
+        color: $csr-color;
+        font-size: 1.05rem;
+        strong {
+            font-size: 1.4rem;
+            margin-right: .15rem;
+        }
+    }
+    &__terms {
+        margin-top: .35rem;
+        font-size: .9rem;
+        color: #555;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .35rem;
+    }
+    &__terms-label {
+        font-weight: bold;
+    }
+    &__tag {
+        display: inline-block;
+        padding: .15rem .65rem;
+        background-color: #fff;
+        border: 1px solid $csr-color;
+        color: $csr-color;
+        border-radius: 999px;
+        font-size: .8rem;
+        line-height: 1.4;
+    }
+    &__clear {
+        margin-left: auto;
+        color: #777;
+        text-decoration: underline;
+        font-size: .85rem;
+        &:hover {
+            color: $csr-color;
+        }
+    }
+    @include sp-wide {
+        padding: .65rem .8rem;
+        &__count {
+            strong {
+                font-size: 1.2rem;
+            }
+        }
+        &__clear {
+            margin-left: 0;
+        }
+    }
+}
+
+// タブレット/SP時のレイアウト並び替え（活動一覧のみ）
+//   サイドカラムが上下スタックになる幅(991px以下)では
+//   「タイトル → 検索フィルター → 記事一覧 → アーカイブ年バナー」の順に並び替える。
+//   HTMLは触らず、Grid + display:contents で並びを再構成する。
+//   PC時(992px以上)は通常の .row(flex) 2カラムで何も影響しない。
+.csr.csr-activities-index {
+    @include pc-md {
+        .csr-newslist .csr-news > .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "filter"
+                "list"
+                "archive";
+            row-gap: 0;
+        }
+        .article-list { grid-area: list; }
+
+        // archive-list を grid の擬似透過コンテナにして、その子要素を直接配置する
+        .archive-list {
+            display: contents;
+        }
+        .archive-list > .csr-filter      { grid-area: filter; }
+        .archive-list > .csr-posts-index { grid-area: archive; }
+    }
+    // スマホ：アーカイブ年バナーと「これまでの活動報告一覧」ボタンを画面端から離す
+    @include sp-wide {
+        .archive-list > .csr-posts-index {
+            padding-left: .5rem;
+            padding-right: .5rem;
+        }
+    }
+}
+
+// サイドフィルター（活動報告を探す）
+//   PCサイドカラム(col-md-3)の幅を想定。タグは2カラムグリッドで横スペースを有効活用。
+//   タグが8件以上になったら is-scrollable クラスで内部スクロール発動（PHP側で付与）。
+.csr-filter {
+    margin-bottom: 1.25rem;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+    overflow: hidden; // 上下角丸を担保
+
+    &__form {
+        margin: 0;
+    }
+
+    // ヘッダー（活動報告を探す + ※複数選択可）
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .75rem 1rem;
+        background-color: lighten($csr-color, 40%);
+        border-bottom: 1px solid #f0e6d4;
+    }
+    &__title {
+        font-size: 1rem;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.2;
+        gap: 2px;
+        > span:first-child {
+            font-weight: bold;
+            font-size: 1.02rem;
+            position: relative;
+            padding-left: .55rem;
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: .15rem;
+                bottom: .15rem;
+                width: 3px;
+                border-radius: 2px;
+                background-color: $csr-color;
+            }
+        }
+    }
+    &__note {
+        font-size: .7rem;
+        font-weight: normal;
+        color: #999;
+        padding-left: .55rem;
+    }
+    &__toggle {
+        background: transparent;
+        border: none;
+        color: #888;
+        padding: .2rem .35rem;
+        cursor: pointer;
+        font-size: .9rem;
+        // PCでは非表示（SPのみで開閉操作）
+        display: none;
+        @include sp-wide {
+            display: inline-flex;
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+
+    // 本体
+    &__body {
+        padding: .75rem .85rem .85rem;
+        transition: max-height .3s ease, opacity .2s ease, padding .2s ease;
+        overflow: hidden;
+        &.is-closed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+        }
+    }
+
+    // タグリスト本体（2カラムグリッド + アコーディオン展開式）
+    //   ・初期は最大6件まで表示
+    //   ・7件目以降は .is-hidden-tag で非表示、.is-expanded で展開時に表示
+    //   ・同じ行のタグは長文タグに合わせて高さを自動で揃える（可変対応）
+    &__tags {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .4rem;
+        padding-left: 0;
+        margin-top: 0;
+        margin-bottom: .5rem;
+        // 各行のセルを同じ高さに揃える（明示）
+        align-items: stretch;
+    }
+    &__tag-item {
+        margin: 0;
+        min-width: 0;     // grid item overflow 対策
+        display: flex;    // 中の <label> を 100% に伸ばすため flex 化
+        align-items: stretch;
+
+        // 7件目以降は隠す（初期）
+        &.is-hidden-tag {
+            display: none;
+        }
+    }
+    // 展開状態：隠していたタグも表示
+    &__tags.is-expanded &__tag-item.is-hidden-tag {
+        display: flex;
+    }
+
+    // 「あと○件のタグを見る」ボタン
+    &__more-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .35rem;
+        margin: 0 0 .25rem;
+        padding: .45rem .5rem;
+        background-color: transparent;
+        border: 1px dashed #d0d0d0;
+        border-radius: 6px;
+        color: #666;
+        font-size: .8rem;
+        cursor: pointer;
+        line-height: 1.3;
+        transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+        strong {
+            color: $csr-color;
+            font-size: .9rem;
+            margin: 0 1px;
+        }
+        i {
+            font-size: .7rem;
+            color: #999;
+            transition: color .2s ease;
+        }
+        &:hover {
+            background-color: lighten($csr-color, 43%);
+            border-color: $csr-color;
+            color: $csr-color;
+            i { color: $csr-color; }
+        }
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(243, 162, 59, .2);
+        }
+        // 展開時/折りたたみ時のテキスト切替
+        .csr-filter__more-text-expanded  { display: none; }
+        .csr-filter__more-text-collapsed { display: inline-flex; align-items: center; gap: .3rem; }
+        &[aria-expanded="true"] {
+            .csr-filter__more-text-collapsed { display: none; }
+            .csr-filter__more-text-expanded  { display: inline-flex; align-items: center; gap: .3rem; }
+        }
+    }
+    &__tag {
+        display: flex;
+        // 複数行になった時は左寄せで上から並べ、円アイコンとテキストが上揃えになるように
+        align-items: flex-start;
+        gap: .35rem;
+        width: 100%;
+        height: 100%; // 親(grid item)の高さに追従して、行内の他タグと高さを揃える
+        padding: .5rem .7rem;
+        background-color: #fff;
+        border: 1px solid #d8d8d8;
+        color: #444;
+        // 全文表示できるよう、角丸は控えめに（pill ではなく rounded square）
+        border-radius: 8px;
+        font-size: .8rem;
+        line-height: 1.35;
+        cursor: pointer;
+        transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+        margin-bottom: 0;
+        user-select: none;
+        position: relative;
+        min-width: 0;
+
+        // チェックアイコン（::before で疑似要素として表示）
+        //   折り返し2行になっても1行目に並ぶよう、上端からの位置を line-height に合わせて調整
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 50%;
+            background-color: #fff;
+            flex-shrink: 0;
+            transition: background-color .15s ease, border-color .15s ease;
+            // フォントサイズ .8rem × line-height 1.35 ≒ 1.08rem の中央付近 ≒ 5px に円形12pxの上端
+            margin-top: 3px;
+        }
+        // タグ文字（全文表示・複数行折り返しOK）
+        > span {
+            flex: 1 1 auto;
+            text-align: left;
+            min-width: 0;
+            // 全文表示するため省略を解除
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+        &:hover {
+            border-color: $csr-color;
+            color: $csr-color;
+            background-color: lighten($csr-color, 43%);
+            &::before {
+                border-color: $csr-color;
+            }
+        }
+        &.is-selected {
+            background-color: $csr-color;
+            border-color: $csr-color;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(243, 162, 59, .25);
+            &::before {
+                background-color: #fff;
+                border-color: #fff;
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'><path fill='none' stroke='%23f3a23b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 7.5l3 3 5-6'/></svg>");
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 10px 10px;
+            }
+            &:hover {
+                background-color: darken($csr-color, 6%);
+                color: #fff;
+            }
+        }
+    }
+
+    // ボタンエリア
+    &__actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: .35rem;
+        margin-top: .75rem;
+        padding-top: .65rem;
+        border-top: 1px dashed #eaeaea;
+    }
+    &__submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .35rem;
+        width: 100%;
+        padding: .55rem .75rem;
+        background-color: $csr-color;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: .9rem;
+        font-weight: bold;
+        cursor: pointer;
+        letter-spacing: .02em;
+        transition: background-color .2s ease, transform .1s ease, box-shadow .2s ease;
+        box-shadow: 0 2px 4px rgba(243, 162, 59, .25);
+        &::before {
+            content: "\f002"; // FontAwesome 虫眼鏡
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: .8rem;
+        }
+        &:hover {
+            background-color: darken($csr-color, 8%);
+            box-shadow: 0 3px 6px rgba(243, 162, 59, .35);
+        }
+        &:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(243, 162, 59, .25);
+        }
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(243, 162, 59, .3);
+        }
+    }
+    // 絞り込みボタン内の改行調整ポイント（タブレット幅のみ block化）
+    &__submit-break {
+        display: none; // 通常は無視
+    }
+    &__reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: .75rem;
+        color: #888;
+        padding: .25rem .5rem;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: color .2s ease, background-color .2s ease;
+        &::before {
+            content: "\f00d"; // FontAwesome ×
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: .65rem;
+            margin-right: .25rem;
+            opacity: .6;
+        }
+        &:hover {
+            color: $csr-color;
+            text-decoration: underline;
+        }
+    }
+
+    // タブレット（577px〜991px）：サイドカラム幅が狭くなるため、タグを1カラムに切替
+    //   2カラムだと「神戸ストークス」が縦読みになる崩壊が起こるため
+    @media (min-width: 577px) and (max-width: 991px) {
+        &__tags {
+            grid-template-columns: 1fr; // 1カラム
+        }
+        &__tag {
+            font-size: .85rem;
+            padding: .5rem .85rem;
+        }
+        // 「もっと見る」ボタン：はみ出さないよう内側のテキスト折り返しを許可
+        //   ※ aria-expanded での collapsed / expanded の出し分けは PC定義側に任せるため
+        //     ここでは display を上書きしない。内側の white-space と line-height のみ調整。
+        &__more-btn {
+            font-size: .8rem;
+            padding: .5rem .6rem;
+            line-height: 1.35;
+            strong { font-size: .9rem; margin-left: .15rem; }
+        }
+        // 絞り込みボタン：枠内に収まる範囲で。「この条件で / 絞り込む」の意味の塊で改行
+        &__submit {
+            font-size: .9rem;
+            padding: .55rem .5rem;
+            white-space: normal;
+            line-height: 1.3;
+        }
+        // タブレット幅では submit-break の位置で改行を強制
+        &__submit-break {
+            display: block;
+        }
+    }
+
+    // スマホ（576px以下）：PC同等の2カラム角丸squareでトンマナ統一
+    //   フィルター枠は画面幅に余裕を持たせ、内側のパディングも広めに取って窮屈さを解消
+    @include sp-wide {
+        margin: 0 .5rem 1rem; // 左右に少し余白を作って画面端からの圧迫感を解消
+
+        &__head {
+            cursor: pointer;
+            padding: .85rem 1rem;
+        }
+        &__body {
+            padding: 1rem;
+        }
+        &__tags {
+            // SPでも PCと同じ2カラム角丸square
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .5rem;
+        }
+        &__tag-item {
+            width: 100%;
+        }
+        &__tag {
+            width: 100%;
+            padding: .55rem .8rem;
+            font-size: .85rem;
+            border-radius: 8px; // PC同様の角丸square
+            &::before {
+                display: inline-block; // SPでも円アイコンを表示（タグの選択状態を明示）
+            }
+            > span {
+                white-space: normal;
+                overflow: visible;
+                word-break: break-word;
+            }
+        }
+        &__more-btn {
+            font-size: .85rem;
+            padding: .55rem .5rem;
+            strong { font-size: .95rem; }
+        }
+        &__submit {
+            padding: .65rem .75rem;
+            font-size: .95rem;
+        }
+    }
+}
+
