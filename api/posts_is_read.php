@@ -59,6 +59,9 @@ function is_already_read($post_id) {
     $insert_format = ['%d','%d','%s','%d'];
     $table_name = $wpdb->prefix . 'read';
     $wpdb->insert($table_name, $insert_data, $insert_format);
+    delete_transient('unread_array_' . $member_id);
+    delete_transient('unread_counts_all_' . $member_id);
+    delete_transient('unread_important_counts_' . $member_id);
 
     // --------------------------------------------------------------------
     // セッション側の未読リストを更新（ここで使用するキー名をプロジェクト標準に合わせる）

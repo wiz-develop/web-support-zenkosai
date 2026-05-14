@@ -1502,15 +1502,13 @@ function add_link_form()
             $user_agent = 'SP';
         }
 
-        echo '<form id="submitMypage" action="' . esc_url($mypage_directori) . '" method="post" accept-charset="utf-8">';
-        if (isset($_SESSION['mypage_member_info'])) {
-            foreach ($_SESSION['mypage_member_info'] as $key => $value) {
-                echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-            }
-        }
-        else {
-            //ログインAPI
-            $url = $mypage_directori . '/api/new-poral-login/';
+	        echo '<form id="submitMypage" action="' . esc_url($mypage_directori) . '" method="post" accept-charset="utf-8">';
+	        $mypage_member_info = isset($_SESSION['mypage_member_info']) && is_array($_SESSION['mypage_member_info'])
+	            ? $_SESSION['mypage_member_info']
+	            : [];
+	        if (empty($mypage_member_info)) {
+	            //ログインAPI
+	            $url = $mypage_directori . '/api/new-poral-login/';
             // 渡したいパラメータ
             $params =
             [
@@ -1532,18 +1530,19 @@ function add_link_form()
             $response_code = $response_info['http_code']; //通信結果のHTTPステータスコード
             $response_header_size = $response_info['header_size']; //通信結果のヘッダサイズ
 
-            // JSON連想配列へ変換
-            $arr = json_decode($response, true);
-            $member_info = $arr['member_info'];
-            $arr_member_id = $arr['member_info']['member_id'];
-            $arr['member_info']['member_id'] = sprintf('%012d', $arr_member_id);
+	            // JSON連想配列へ変換
+	            $arr = json_decode($response, true);
+	            if (is_array($arr) && isset($arr['member_info']) && is_array($arr['member_info'])) {
+	                $mypage_member_info = $arr['member_info'];
+	                $_SESSION['mypage_member_info'] = $mypage_member_info;
+	            }
+	            curl_close($curl);
+	        }
+	        foreach ($mypage_member_info as $key => $value) {
+	            echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
+	        }
 
-            foreach ($member_info as $key => $value) {
-                echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-            }
-        }
-
-        // サイト側のカスタムフィールドで設定した文章を、マイページへ表示する
+	        // サイト側のカスタムフィールドで設定した文章を、マイページへ表示する
         $mypage_page_data = get_page_by_path('file-download');
         $mypage_page_id = $mypage_page_data->ID;
         $request_text = CFS()->get('request_text', $mypage_page_id);
@@ -3070,7 +3069,7 @@ function set_session_member_info($member_info)
     global $mypage_directori;
 
     // 未読の投稿IDの配列を作成
-    $posts_unread = create_unread_array($member_info['member_id']);
+    $posts_unread = create_unread_array($member_info['member_id'], $member_info['startdate']);
 
     // セッションスタート
     session_start();
@@ -5144,6 +5143,9 @@ function mark_info_read_ajax()
     // if logged in, optionally persist session into user_meta as backup (optional)
     if ($user_id && is_numeric($user_id)) {
         update_user_meta($user_id, 'member_unread_list', $_SESSION['is_unread']);
+        delete_transient('unread_array_' . $user_id);
+        delete_transient('unread_counts_all_' . $user_id);
+        delete_transient('unread_important_counts_' . $user_id);
     }
 
     wp_send_json_success(['removed' => $ids, 'remaining' => $_SESSION['is_unread']]);

@@ -237,7 +237,15 @@ wp_head();
 	$unread_month = 0;
 
 	if ($member_id && function_exists('count_unreads_all')) {
-		$counts = count_unreads_all($member_id);
+		$unread_counts_cache_key = 'unread_counts_all_' . intval($member_id);
+		$counts = get_transient($unread_counts_cache_key);
+		if ($counts === false || !is_array($counts)) {
+			$counts = count_unreads_all($member_id);
+			if (!is_array($counts)) {
+				$counts = ['tab' => 0, 'bar' => 0];
+			}
+			set_transient($unread_counts_cache_key, $counts, 5 * MINUTE_IN_SECONDS);
+		}
 		$unread_exist = (int)($counts['tab'] ?? 0);
 		$unread_month = (int)($counts['bar'] ?? 0);
 	}

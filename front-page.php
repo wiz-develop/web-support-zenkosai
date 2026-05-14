@@ -362,9 +362,10 @@ get_header(); ?>
 				</div>
 				<div class="home-info-div__list">
 					<?php
-						$args = array(
-							'posts_per_page' => 2,
-							'post_type'      => array('information', 'social-contribution'),
+							$args = array(
+								'posts_per_page' => 2,
+								'no_found_rows'  => true,
+								'post_type'      => array('information', 'social-contribution'),
                             'date_query' => array(
                                 array(
                                     'after' => date("Y-m-d",strtotime("-1 month")),
@@ -417,9 +418,10 @@ get_header(); ?>
 							</div>
 							<div class="tab-pane fade" id="home-service" role="tabpanel" aria-labelledby="home-service-tab">
 								<?php
-									$args_service = array(
-										'posts_per_page' => 2,
-										'post_type' => 'information',
+										$args_service = array(
+											'posts_per_page' => 2,
+											'no_found_rows'  => true,
+											'post_type' => 'information',
                                         'date_query' => array(
                                             array(
                                                 'after' => date("Y-m-d",strtotime("-1 month")),
@@ -450,9 +452,10 @@ get_header(); ?>
 									$csr_id = get_term_by('slug','csr','news');
 									$csr_cat_terms = get_terms('csr_cat');
 									$csr_cat_term_ids = array_column( $csr_cat_terms, 'term_id' );
-									$args_csr = array(
-										'posts_per_page' => 2,
-										'post_type' => array('information','social-contribution'),
+										$args_csr = array(
+											'posts_per_page' => 2,
+											'no_found_rows'  => true,
+											'post_type' => array('information','social-contribution'),
                                         'date_query' => array(
                                             array(
                                                 'after' => date("Y-m-d",strtotime("-1 month")),
@@ -513,9 +516,10 @@ get_header(); ?>
 								$business_id = $business->term_id;
 								$campaign = get_term_by('slug','campaign','news');
 								$campaign_id = $campaign->term_id;
-								$args_no_login = array(
-									'posts_per_page' => 2,
-									'post_type' => array('information','social-contribution'),
+									$args_no_login = array(
+										'posts_per_page' => 2,
+										'no_found_rows'  => true,
+										'post_type' => array('information','social-contribution'),
 									'date_query' => array(
 										array(
 											'after' => date("Y-m-d",strtotime("-1 month")),

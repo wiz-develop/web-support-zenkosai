@@ -4,7 +4,15 @@
  */
 get_header();
 $css = CFS()->get('css');
-$answers_html = cf7_member_answers_by_form( 'National Conventionチケットお申込みフォーム（確認画面）' );
+
+/*
+ * 出欠回答履歴の取得はDB負荷が高いため、P会員のみ実行する。
+ * また同一リクエスト内で複数回呼ばれていたのを一度だけ取得し、以降は $answers_html を使い回す。
+ */
+$answers_html = '';
+if ( isset($member_type) && $member_type === 'p_member' ) {
+    $answers_html = cf7_member_answers_by_form( 'National Conventionチケットお申込みフォーム（確認画面）' );
+}
 ?>
 
 <div id="page-<?php echo $css; ?>" class="page-<?php echo $css; ?> <?php echo $display_type; ?> <?php echo $login; ?>">
@@ -73,7 +81,7 @@ $answers_html = cf7_member_answers_by_form( 'National Conventionチケットお�
                     </div>
                     <?php endif; ?>
                     <?php
-                        if ( $answers_html ) :
+                        if ( strpos( $answers_html, '<div class="cf7-member-answers">' ) !== false ) :
                     ?>
                     <div class="page-nav__list__item text-center">
                         <a href="#attendance">
@@ -118,6 +126,7 @@ $answers_html = cf7_member_answers_by_form( 'National Conventionチケットお�
                         <?php
                             $args_service = array(
                                 'posts_per_page' => 3,
+                                'no_found_rows'  => true,
                                 'post_type' => 'info-convention',
                             );
                             $posts_service = new WP_Query($args_service);
@@ -328,6 +337,7 @@ $answers_html = cf7_member_answers_by_form( 'National Conventionチケットお�
         </section>
         <?php endif; ?>
         <?php
+            // 上部で取得済みの $answers_html をそのまま使い回す（同一リクエスト内のSQL重複を解消）
             if ( strpos( $answers_html, '<div class="cf7-member-answers">' ) !== false ) :
         ?>
         <section id="attendance" class="content-attendance py-5">
@@ -335,7 +345,7 @@ $answers_html = cf7_member_answers_by_form( 'National Conventionチケットお�
                 <h2 class="convention-tit mb-1"><span>ご招待出欠の回答</span></h2>
                 <p class="mb-3">※最新のものが適用されます。</p>
                 <div class="content-body__item">
-                    <?php echo cf7_member_answers_by_form( 'National Conventionチケットお申込みフォーム（確認画面）' ); ?>
+                    <?php echo $answers_html; ?>
                 </div>
             </div>
         </section>
