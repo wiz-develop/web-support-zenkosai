@@ -5,11 +5,16 @@ require_once(get_stylesheet_directory().'/api/create_unread_array.php');
 global $wpdb;
 global $mypage_directori;
 
-if (empty($unread)){
-    return;
-}
+$count_unreads_all = array(
+    'tab' => 0,
+    'bar' => 0,
+);
 
 $member_id = isset($_SESSION['member_info']['member_id']) ? intval($_SESSION['member_info']['member_id']) : 0;
+if (!$member_id) {
+    return $count_unreads_all;
+}
+
 $cache_key = $member_id ? 'unread_important_counts_' . $member_id : '';
 if ($cache_key !== '') {
     $cached = get_transient($cache_key);
@@ -19,6 +24,11 @@ if ($cache_key !== '') {
 }
 
 $unread = create_unread_array();
+if (!is_array($unread)) {
+    return $count_unreads_all;
+}
+$unread['list'] = isset($unread['list']) && is_array($unread['list']) ? $unread['list'] : array();
+$unread['bar'] = isset($unread['bar']) && is_array($unread['bar']) ? $unread['bar'] : array();
 
 // お知らせタブの「重要」
 // $arg=[];

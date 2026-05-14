@@ -20,7 +20,7 @@ if (is_user_loggedin()){
 	if($unread_month>0){
 		$unread_exist_month = 'unread-exist-month';
 	}
-	$_SESSION['is_unread'] = $unread_month;
+	$_SESSION['is_unread_month_count'] = $unread_month;
 }
 
 // メンテナンス表示

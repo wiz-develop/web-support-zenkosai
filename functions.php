@@ -1,20 +1,4 @@
 <?php
-$hostname = $_SERVER['HTTP_HOST'];
-
-if ($hostname === 'official-webdev.zenko-sai.or.jp') {
-    // 【テスト環境】用の設定
-    define('APP_ENV', 'development');
-} else {
-    // 【本番環境】用の設定（www.zenko-sai.or.jp および その他）
-    define('APP_ENV', 'production');
-}
-
-// 使用例：環境ごとに処理を分ける場合
-// if (APP_ENV === 'development') {
-//     // テスト環境だけで実行したいコード（デバッグ表示など）をここに書く
-// } else {
-//     // 本番環境だけで実行したいコードをここに書く
-// }
 
 /*-------------------------------------------*/
 /*  カスタム投稿タイプ「イベント情報」を追加
@@ -187,11 +171,8 @@ $api_load = '/var/www/html/cms/wp-load.php';
 global $api_directori;
 $api_directori = 'cms/wp-content/themes/zenkosai/api/';
 global $mypage_directori;
-if (APP_ENV === 'development') {
-    $mypage_directori = 'https://test-mypage.zenko-sai.or.jp';
-} else {
-    $mypage_directori = 'https://mypage.zenko-sai.or.jp';
-}
+$mypage_directori = 'https://test-mypage.zenko-sai.or.jp';
+// $mypage_directori = 'https://mypage.zenko-sai.or.jp';
 
 /*-------------------------------------------*/
 /*  社会貢献活動で投稿が「更新情報として投稿」・「更新情報タイトル」を選択して更新された場合
@@ -1502,7 +1483,7 @@ function add_link_form()
             $user_agent = 'SP';
         }
 
-	        echo '<form id="submitMypage" action="' . esc_url($mypage_directori) . '" method="post" accept-charset="utf-8">';
+        echo '<form id="submitMypage" action="' . esc_url($mypage_directori) . '" method="post" accept-charset="utf-8">';
 	        $mypage_member_info = isset($_SESSION['mypage_member_info']) && is_array($_SESSION['mypage_member_info'])
 	            ? $_SESSION['mypage_member_info']
 	            : [];
@@ -1542,7 +1523,7 @@ function add_link_form()
 	            echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
 	        }
 
-	        // サイト側のカスタムフィールドで設定した文章を、マイページへ表示する
+        // サイト側のカスタムフィールドで設定した文章を、マイページへ表示する
         $mypage_page_data = get_page_by_path('file-download');
         $mypage_page_id = $mypage_page_data->ID;
         $request_text = CFS()->get('request_text', $mypage_page_id);
@@ -2008,7 +1989,12 @@ function search_experience($paged)
     $args = array(
         'posts_per_page' => 10, //表示件数
         'paged' => $paged,
-        'orderby' => array('term_order' => 'ASC', 'date' => 'DESC'), // Category Order and Taxonomy Terms Order を使用
+        // 公開日の新しい順で安定ソート（標準のWP挙動）
+        //   ※ 旧実装は 'term_order' を使っていたが、Category Order and Taxonomy Terms Order
+        //     プラグインのターム順に依存し、記事更新で並びが変動 → 11件目以降に
+        //     押し出された投稿が画面から消える不具合があったため修正。
+        'orderby' => 'date',
+        'order'   => 'DESC',
         'post_type' => array('service-experience'),
         'post_status' => 'publish', //公開状態
     );
@@ -2703,226 +2689,247 @@ function login_action($en_user_name, $en_user_pass)
 /**
  * ログイン成功直後に、保存されていたURLがあればそこへリダイレクトさせる処理
  */
-add_action('init', function () {
-    if (session_status() === PHP_SESSION_NONE) {
-        @session_start();
-    }
-    if (!empty($_SESSION['member_info']) && !empty($_SESSION['redirect_after_login'])) {
-        // お問い合わせ関連ページではリダイレクトを実行しない（フォーム送信を妨害するため）
-        $current_uri = $_SERVER['REQUEST_URI'] ?? '';
-        if (strpos($current_uri, '/contact/') !== false) {
-            return;
-        }
+// add_action('init', function () {
+//     if (session_status() === PHP_SESSION_NONE) {
+//         @session_start();
+//     }
+//     if (!empty($_SESSION['member_info']) && !empty($_SESSION['redirect_after_login'])) {
+//         // お問い合わせ関連ページではリダイレクトを実行しない（フォーム送信を妨害するため）
+//         $current_uri = $_SERVER['REQUEST_URI'] ?? '';
+//         if (strpos($current_uri, '/contact/') !== false) {
+//             return;
+//         }
 
-        $redirect_url = $_SESSION['redirect_after_login'];
-        if (strpos($redirect_url, 'non-member_faq') !== false || strpos($redirect_url, 'info-convention') !== false) {
-            $redirect_url = home_url('/');
-        }
-        unset($_SESSION['redirect_after_login']);
-        wp_redirect($redirect_url);
-        exit;
-    }
-}, 5);
+//         $redirect_url = $_SESSION['redirect_after_login'];
+//         if (strpos($redirect_url, 'non-member_faq') !== false || strpos($redirect_url, 'info-convention') !== false) {
+//             $redirect_url = home_url('/');
+//         }
+//         unset($_SESSION['redirect_after_login']);
+//         wp_redirect($redirect_url);
+//         exit;
+//     }
+// }, 5);
 
-add_action('template_redirect', function () {
-    if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST) || (defined('DOING_AJAX') && DOING_AJAX) || php_sapi_name() === 'cli') {
-        return;
-    }
-
-    $current_uri = $_SERVER['REQUEST_URI'];
-
-    // uploads/.htaccessの ErrorDocument 403 → /index.php からのリダイレクト対応
-    // Apache が FilesMatch で PDF を 403 拒否 → ErrorDocument で /index.php へ内部リダイレクトした場合、
-    // 元のPDF URLは REDIRECT_URL に格納される。
-    if (
-    isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] == '403'
-    && isset($_SERVER['REDIRECT_URL'])
-    && preg_match('/\.(pdf|doc|docx)$/i', $_SERVER['REDIRECT_URL'])
-    ) {
-        $current_uri = $_SERVER['REDIRECT_URL'];
-    }
-
-    // 独自セッションログイン判定
-    $is_member_logged_in = is_user_loggedin();
-    // WordPress管理者ログイン判定（テスト時はログアウトするかシークレットモードを使用）
-    $is_wp_admin = current_user_can('manage_options');
-
-    // 1. PDF/DOCデータのアクセス制御
-    if (preg_match('/\.(pdf|doc|docx)$/i', $current_uri)) {
-        if (!$is_member_logged_in && !$is_wp_admin) {
-            wp_safe_redirect(home_url('/'));
-            exit;
-        }
-        else {
-            $path_part = urldecode(strtok($current_uri, '?'));
-            // パターン1：$_SERVER['DOCUMENT_ROOT']基準
-            $file_path = $_SERVER['DOCUMENT_ROOT'] . $path_part;
-
-            // パターン2：ABSPATH基準（KUSANAGIなど環境によってDOCUMENT_ROOTがズレる場合のフォールバック）
-            if (!file_exists($file_path)) {
-                $relative_path = preg_replace('#^/cms/#', '', $path_part);
-                $fallback_path = ABSPATH . ltrim($relative_path, '/');
-                if (file_exists($fallback_path)) {
-                    $file_path = $fallback_path;
-                }
-            }
-
-            if (file_exists($file_path)) {
-                // gzip圧縮などが有効な場合、Content-Lengthと実際のサイズが合わずエラーになるのを防ぐ
-                if (function_exists('apache_setenv')) {
-                    @apache_setenv('no-gzip', 1);
-                }
-                @ini_set('zlib.output_compression', 'Off');
-
-                // 全出力バッファをクリアしてゴミ混入を防ぐ
-                while (ob_get_level()) {
-                    ob_end_clean();
-                }
-
-                $finfo = new finfo(FILEINFO_MIME_TYPE);
-                $mime_type = $finfo->file($file_path);
-
-                // ErrorDocument 403 経由の場合、ステータスを200に上書き
-                status_header(200);
-
-                header('Content-Type: ' . $mime_type);
-                header('Content-Disposition: inline; filename="' . basename($file_path) . '"');
-                // Content-Lengthは圧縮の影響で狂うことがあるため、確実に送れる場合のみか外す
-                header('Content-Length: ' . filesize($file_path));
-                header('Accept-Ranges: bytes');
-                nocache_headers(); // ブラウザキャッシュによる認証回避を防ぐ
-
-                readfile($file_path);
-                exit;
-            }
-            else {
-                // ファイルが見つからない場合は404ページへ（これをしないとHTMLがPDFとして出力されエラーになる）
-                status_header(404);
-                nocache_headers();
-                include(get_query_template('404'));
-                exit;
-            }
-        }
-    }
-
-
-    // 2. お問合せ関連ページは常に許可（リダイレクトループ防止）
-    $bypass_paths = array(
-        '/contact/'  // お問合せ関連（確認・完了・エラーを含む階層下すべて）
-    );
-
-    foreach ($bypass_paths as $path) {
-        if (strpos($current_uri, $path) !== false) {
-            return;
-        }
-    }
-
-    // 3. ログイン済みの場合は制限判定をスキップ
-    if ($is_member_logged_in || $is_wp_admin) {
-        return;
-    }
-
-    // --- 4. 制限判定ロジック ---
-    $is_restrict = false;
-    $post_id = get_queried_object_id();
-
-    // CFS単体制限
-    if ($post_id && function_exists('CFS')) {
-        $val = CFS()->get('restrict_page', $post_id);
-        if (!empty($val) && in_array($val, [true, 'true', '1', 1], true)) {
-            $is_restrict = true;
-        }
-    }
-
-    // site-settings 動的パス制限
-    if (!$is_restrict && function_exists('CFS')) {
-        $settings_page = get_page_by_path('site-settings', OBJECT, 'page');
-        if ($settings_page) {
-            $restricted_paths = CFS()->get('restrict_path_list', $settings_page->ID);
-            if (is_array($restricted_paths)) {
-                foreach ($restricted_paths as $row) {
-                    if (!empty($row['path']) && strpos($current_uri, $row['path']) !== false) {
-                        $is_restrict = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // スラッグ・投稿タイプ判定（URIに /lifesupport/ が含まれる場合を明示的に追加）
-    if (!$is_restrict) {
-        $pagename = get_query_var('pagename') ?: ($post_id ? get_post_field('post_name', $post_id) : '');
-        $protect_slugs = array('media', 'media-list', 'sso-gate', 'info-convention', 'aul-archive', 'service-experience', 'plusa');
-        $protect_post_types = array('lifesupport', 'ufaq', 'info-convention', 'service-experience', 'media');
-
-        if (
-        in_array($pagename, $protect_slugs, true) ||
-        is_singular($protect_post_types) ||
-        is_tax('ufaq-category') ||
-        is_attachment() ||
-        is_post_type_archive($protect_post_types) ||
-        strpos($current_uri, '/plusa/') !== false ||
-        strpos($current_uri, '/lifesupport/') !== false || // ライフサポート配下を保護
-        strpos($current_uri, '/aul-archive/') !== false ||
-        strpos($current_uri, '/service-experience/') !== false
-        ) {
-            $is_restrict = true;
-        }
-    }
-
-    if (!$is_restrict)
-        return;
-
-    // リダイレクト処理
-    $login_page = get_page_by_path('login');
-    $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
-
-    if (strpos($current_uri, 'session-expired') !== false || ($login_page && $post_id === $login_page->ID)) {
-        return;
-    }
-
-    if (!empty($_GET['return_url'])) {
-        $_SESSION['redirect_after_login'] = esc_url_raw($_GET['return_url']);
-    }
-    else {
-        $protocol = is_ssl() ? 'https://' : 'http://';
-        $_SESSION['redirect_after_login'] = $protocol . $_SERVER['HTTP_HOST'] . $current_uri;
-    }
-
-    nocache_headers();
-    $redirect_payload = urlencode($_SESSION['redirect_after_login']);
-    $login_url = add_query_arg('redirect_to', $redirect_payload, $login_url);
-    wp_safe_redirect($login_url);
-    exit;
-}, 1);
 // add_action('template_redirect', function () {
-//     // ログイン済み、または管理画面なら何もしない
-//     if (is_user_loggedin() || is_admin()) return;
+//     if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST) || (defined('DOING_AJAX') && DOING_AJAX) || php_sapi_name() === 'cli') {
+//         return;
+//     }
 
 //     $current_uri = $_SERVER['REQUEST_URI'];
 
-//     // URLに「/insurance/comeback/」が含まれている場合のみ発動
-//     if (strpos($current_uri, '/insurance/comeback/') !== false) {
-        
-//         // セッション開始（戻り先保存用）
-//         if (session_status() === PHP_SESSION_NONE) { @session_start(); }
-        
+//     // uploads/.htaccessの ErrorDocument 403 → /index.php からのリダイレクト対応
+//     // Apache が FilesMatch で PDF を 403 拒否 → ErrorDocument で /index.php へ内部リダイレクトした場合、
+//     // 元のPDF URLは REDIRECT_URL に格納される。
+//     if (
+//     isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] == '403'
+//     && isset($_SERVER['REDIRECT_URL'])
+//     && preg_match('/\.(pdf|doc|docx)$/i', $_SERVER['REDIRECT_URL'])
+//     ) {
+//         $current_uri = $_SERVER['REDIRECT_URL'];
+//     }
+
+//     // 独自セッションログイン判定
+//     $is_member_logged_in = is_user_loggedin();
+//     // WordPress管理者ログイン判定（テスト時はログアウトするかシークレットモードを使用）
+//     $is_wp_admin = current_user_can('manage_options');
+
+//     // 1. PDF/DOCデータのアクセス制御
+//     if (preg_match('/\.(pdf|doc|docx)$/i', $current_uri)) {
+//         if (!$is_member_logged_in && !$is_wp_admin) {
+//             wp_safe_redirect(home_url('/'));
+//             exit;
+//         }
+//         else {
+//             $path_part = urldecode(strtok($current_uri, '?'));
+//             // パターン1：$_SERVER['DOCUMENT_ROOT']基準
+//             $file_path = $_SERVER['DOCUMENT_ROOT'] . $path_part;
+
+//             // パターン2：ABSPATH基準（KUSANAGIなど環境によってDOCUMENT_ROOTがズレる場合のフォールバック）
+//             if (!file_exists($file_path)) {
+//                 $relative_path = preg_replace('#^/cms/#', '', $path_part);
+//                 $fallback_path = ABSPATH . ltrim($relative_path, '/');
+//                 if (file_exists($fallback_path)) {
+//                     $file_path = $fallback_path;
+//                 }
+//             }
+
+//             if (file_exists($file_path)) {
+//                 // gzip圧縮などが有効な場合、Content-Lengthと実際のサイズが合わずエラーになるのを防ぐ
+//                 if (function_exists('apache_setenv')) {
+//                     @apache_setenv('no-gzip', 1);
+//                 }
+//                 @ini_set('zlib.output_compression', 'Off');
+
+//                 // 全出力バッファをクリアしてゴミ混入を防ぐ
+//                 while (ob_get_level()) {
+//                     ob_end_clean();
+//                 }
+
+//                 $finfo = new finfo(FILEINFO_MIME_TYPE);
+//                 $mime_type = $finfo->file($file_path);
+
+//                 // ErrorDocument 403 経由の場合、ステータスを200に上書き
+//                 status_header(200);
+
+//                 header('Content-Type: ' . $mime_type);
+//                 header('Content-Disposition: inline; filename="' . basename($file_path) . '"');
+//                 // Content-Lengthは圧縮の影響で狂うことがあるため、確実に送れる場合のみか外す
+//                 header('Content-Length: ' . filesize($file_path));
+//                 header('Accept-Ranges: bytes');
+//                 nocache_headers(); // ブラウザキャッシュによる認証回避を防ぐ
+
+//                 readfile($file_path);
+//                 exit;
+//             }
+//             else {
+//                 // ファイルが見つからない場合は404ページへ（これをしないとHTMLがPDFとして出力されエラーになる）
+//                 status_header(404);
+//                 nocache_headers();
+//                 include(get_query_template('404'));
+//                 exit;
+//             }
+//         }
+//     }
+
+
+//     // 2. お問合せ関連ページは常に許可（リダイレクトループ防止）
+//     $bypass_paths = array(
+//         '/contact/'  // お問合せ関連（確認・完了・エラーを含む階層下すべて）
+//     );
+
+//     foreach ($bypass_paths as $path) {
+//         if (strpos($current_uri, $path) !== false) {
+//             return;
+//         }
+//     }
+
+//     // 3. ログイン済みの場合は制限判定をスキップ
+//     if ($is_member_logged_in || $is_wp_admin) {
+//         return;
+//     }
+
+//     // --- 4. 制限判定ロジック ---
+//     $is_restrict = false;
+//     $post_id = get_queried_object_id();
+
+//     // CFS単体制限
+//     if ($post_id && function_exists('CFS')) {
+//         $val = CFS()->get('restrict_page', $post_id);
+//         if (!empty($val) && in_array($val, [true, 'true', '1', 1], true)) {
+//             $is_restrict = true;
+//         }
+//     }
+
+//     // site-settings 動的パス制限
+//     if (!$is_restrict && function_exists('CFS')) {
+//         $settings_page = get_page_by_path('site-settings', OBJECT, 'page');
+//         if ($settings_page) {
+//             $restricted_paths = CFS()->get('restrict_path_list', $settings_page->ID);
+//             if (is_array($restricted_paths)) {
+//                 foreach ($restricted_paths as $row) {
+//                     if (!empty($row['path']) && strpos($current_uri, $row['path']) !== false) {
+//                         $is_restrict = true;
+//                         break;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     // スラッグ・投稿タイプ判定（URIに /lifesupport/ が含まれる場合を明示的に追加）
+//     if (!$is_restrict) {
+//         $pagename = get_query_var('pagename') ?: ($post_id ? get_post_field('post_name', $post_id) : '');
+//         $protect_slugs = array('media', 'media-list', 'sso-gate', 'info-convention', 'aul-archive', 'service-experience', 'plusa');
+//         $protect_post_types = array('lifesupport', 'ufaq', 'info-convention', 'service-experience', 'media');
+
+//         if (
+//         in_array($pagename, $protect_slugs, true) ||
+//         is_singular($protect_post_types) ||
+//         is_tax('ufaq-category') ||
+//         is_attachment() ||
+//         is_post_type_archive($protect_post_types) ||
+//         strpos($current_uri, '/plusa/') !== false ||
+//         strpos($current_uri, '/lifesupport/') !== false || // ライフサポート配下を保護
+//         strpos($current_uri, '/aul-archive/') !== false ||
+//         strpos($current_uri, '/service-experience/') !== false
+//         ) {
+//             $is_restrict = true;
+//         }
+//     }
+
+//     if (!$is_restrict)
+//         return;
+
+//     // リダイレクト処理
+//     $login_page = get_page_by_path('login');
+//     $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
+
+//     if (strpos($current_uri, 'session-expired') !== false || ($login_page && $post_id === $login_page->ID)) {
+//         return;
+//     }
+
+//     if (!empty($_GET['return_url'])) {
+//         $_SESSION['redirect_after_login'] = esc_url_raw($_GET['return_url']);
+//     }
+//     else {
 //         $protocol = is_ssl() ? 'https://' : 'http://';
 //         $_SESSION['redirect_after_login'] = $protocol . $_SERVER['HTTP_HOST'] . $current_uri;
-
-//         // ログインページを取得してリダイレクト
-//         $login_page = get_page_by_path('login');
-//         $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
-        
-//         // 戻り先URLをパラメータに付与
-//         $login_url = add_query_arg('redirect_to', urlencode($_SESSION['redirect_after_login']), $login_url);
-        
-//         nocache_headers();
-//         wp_safe_redirect($login_url);
-//         exit;
 //     }
-// }, 10);
+
+//     nocache_headers();
+//     $redirect_payload = urlencode($_SESSION['redirect_after_login']);
+//     $login_url = add_query_arg('redirect_to', $redirect_payload, $login_url);
+//     wp_safe_redirect($login_url);
+//     exit;
+// }, 1);
+add_action('template_redirect', function () {
+    // ログイン済み、または管理画面なら何もしない
+    if (is_user_loggedin() || is_admin()) return;
+
+    $current_uri = $_SERVER['REQUEST_URI'];
+    
+    // 対象となるパスのリスト
+    $target_paths = [
+        '/insurance/comeback/',
+        '/business/kaimoba/',
+        '/service-experience/',
+        '/service-experience-list/form/',
+        '/plusa/',
+        '/faq/',
+        '/aul/'
+    ];
+
+    // 現在のURLに対象のパスが含まれているかチェック
+    $should_redirect = false;
+    foreach ($target_paths as $path) {
+        if (strpos($current_uri, $path) !== false) {
+            $should_redirect = true;
+            break;
+        }
+    }
+
+    // 対象パスに一致した場合のみリダイレクト処理を実行
+    if ($should_redirect) {
+        
+        // セッション開始（戻り先保存用）
+        if (session_status() === PHP_SESSION_NONE) { @session_start(); }
+        
+        $protocol = is_ssl() ? 'https://' : 'http://';
+        $full_url = $protocol . $_SERVER['HTTP_HOST'] . $current_uri;
+        $_SESSION['redirect_after_login'] = $full_url;
+
+        // ログインページを取得してリダイレクト
+        $login_page = get_page_by_path('login');
+        $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
+        
+        // 戻り先URLをパラメータに付与
+        $login_url = add_query_arg('redirect_to', urlencode($full_url), $login_url);
+        
+        nocache_headers();
+        wp_safe_redirect($login_url);
+        exit;
+    }
+}, 10);
 
 /*-------------------------------------------
  受け取ったログイン情報をわかりやすい形に整形

@@ -19,7 +19,7 @@ endforeach;
 
 $title = mb_strimwidth( strip_tags( get_the_title() ), 0, 100, '…', 'UTF-8' );
 $unread = '';
-if ($_SESSION['is_unread']){
+if (!empty($_SESSION['is_unread']) && is_array($_SESSION['is_unread'])){
 	if(in_array( get_the_ID(), $_SESSION['is_unread'] )) {
 		$unread = 'unread-news';
 	}
