@@ -461,41 +461,75 @@ get_header();
                     <span class="scroll-hint">横にスクロールしてご覧ください →</span>
                     <div class="cb-table-scroll">
                         <table class="cb-table cb-table--benefits-v2">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" class="empty-cell"></th>
-                                    <th rowspan="2">災害死亡<br>保険金</th>
-                                    <th rowspan="2">災害入院<br>一時金</th>
-                                    <th rowspan="2">災害手術<br>一時金</th>
-                                    <th colspan="2" class="nested-header">12疾病一時金</th>
-                                    <th rowspan="2">二大疾病<br>死亡保険金</th>
-                                </tr>
-                                <tr>
-                                    <th class="sub-header">3大疾病</th>
-                                    <th class="sub-header">9疾病</th>
+	                            <thead>
+	                                <tr>
+	                                    <th rowspan="2" class="empty-cell"></th>
+	                                    <th colspan="2" class="nested-header">12疾病一時金</th>
+	                                    <th rowspan="2">二大疾病<br>死亡保険金</th>
+	                                    <th rowspan="2">災害入院<br>一時金</th>
+	                                    <th rowspan="2">災害手術<br>一時金</th>
+	                                    <th rowspan="2">災害死亡<br>保険金</th>
+	                                </tr>
+	                                <tr>
+	                                    <th class="sub-header">3大疾病</th>
+	                                    <th class="sub-header">9疾病</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                $benefit_rows = CFS()->get('benefit_rows');
-                                if(!empty($benefit_rows)):
-                                    foreach($benefit_rows as $row_index => $row): 
-                                ?>
-                                    <tr>
-                                        <th><?php echo $row['benefit_row_title']; ?></th>
-                                        <?php 
-                                        $cells = $row['benefit_cells'];
-                                        if(!empty($cells)):
-                                            foreach($cells as $cell_index => $cell):
-                                                // 3行目（通算支払限度）かつ「合計で3回」のセル（通常2番目の入力）に特殊クラスを付与
-                                                $is_total_merged = ($row_index === 2 && $cell['benefit_col_span'] == "3");
-                                                $cell_class = $is_total_merged ? 'cell-total-merge' : '';
-                                        ?>
-                                            <td colspan="<?php echo $cell['benefit_col_span']; ?>" class="<?php echo $cell_class; ?>">
-                                                <?php echo $cell['benefit_cell_value']; ?>
-                                            </td>
-                                        <?php 
-                                            endforeach;
+	                                $benefit_rows = CFS()->get('benefit_rows');
+	                                if(!empty($benefit_rows)):
+	                                    foreach($benefit_rows as $row_index => $row): 
+	                                ?>
+	                                    <tr>
+	                                        <th><?php echo $row['benefit_row_title']; ?></th>
+	                                        <?php 
+	                                        $cells = $row['benefit_cells'];
+	                                        if(!empty($cells)):
+	                                            $column_order = array(3, 4, 5, 1, 2, 0);
+	                                            $expanded_cells = array();
+	                                            foreach($cells as $cell_index => $cell) {
+	                                                $col_span = !empty($cell['benefit_col_span']) ? (int) $cell['benefit_col_span'] : 1;
+	                                                for($i = 0; $i < $col_span; $i++) {
+	                                                    $expanded_cells[] = array(
+	                                                        'cell' => $cell,
+	                                                        'index' => $cell_index,
+	                                                    );
+	                                                }
+	                                            }
+
+	                                            $ordered_cells = array();
+	                                            foreach($column_order as $old_column_index) {
+	                                                if(isset($expanded_cells[$old_column_index])) {
+	                                                    $ordered_cells[] = $expanded_cells[$old_column_index];
+	                                                }
+	                                            }
+
+	                                            $render_cells = array();
+	                                            foreach($ordered_cells as $ordered_cell) {
+	                                                $last_index = count($render_cells) - 1;
+	                                                if($last_index >= 0 && $render_cells[$last_index]['index'] === $ordered_cell['index']) {
+	                                                    $render_cells[$last_index]['colspan']++;
+	                                                } else {
+	                                                    $render_cells[] = array(
+	                                                        'cell' => $ordered_cell['cell'],
+	                                                        'index' => $ordered_cell['index'],
+	                                                        'colspan' => 1,
+	                                                    );
+	                                                }
+	                                            }
+
+	                                            foreach($render_cells as $render_cell):
+	                                                $cell = $render_cell['cell'];
+	                                                $col_span = $render_cell['colspan'];
+	                                                $is_total_merged = ($row_index === 2 && $col_span > 1 && strpos($cell['benefit_cell_value'], '合計') !== false);
+	                                                $cell_class = $is_total_merged ? 'cell-total-merge' : '';
+	                                        ?>
+	                                            <td colspan="<?php echo $col_span; ?>" class="<?php echo $cell_class; ?>">
+	                                                <?php echo $cell['benefit_cell_value']; ?>
+	                                            </td>
+	                                        <?php 
+	                                            endforeach;
                                         endif;
                                         ?>
                                     </tr>
